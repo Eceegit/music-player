@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <title>JS Music Player</title>
+    </head>
+    <body>
+        <div class="bodyContainer">
+                <div class="music-container">
+                    <div class="navbar">
+                        <span>Playlist</span>
+                        <i class='bx bx-chevron-down'></i>
+                    </div>
+
+                    <img src="./assets/banner-img.jpg" alt="" class="banner-img">
+
+                    <div class="music-content">
+                       <div class="music-title">
+                           <span>Tobechukwu ft Mercy Chinwo</span>
+                           <p>Song by Nathaniel Bassey</p>                          
+                       </div> 
+                       <i class='bx bx-heart'></i>
+                    </div>
+
+                    <audio controls id="song">
+                        <source src="./assets/Nathaniel-Bassey-Ft-Mercy-Chinwo-Tobechukwu-(TrendyBeatz.com).mp3">
+                    </audio>
+
+                    <input type="range" value="0" id="song-progress">
+                    <div class="duration">
+                        <span id="start">0:00</span> <p>8:06</p>
+                    </div>
+
+                    <div class="song-controls">
+                            <i class='bx bx-shuffle'></i>
+                            <i class='bx bx-rewind'></i>
+                            <div onclick="playPause()">
+                                <i class='bx bx-play' id="play-control"></i>
+                            </div>
+                            <i class='bx bx-fast-forward'></i>
+                            <i class='bx bx-minus-circle' ></i>                         
+                    </div>
+                </div>
+        </div>
+
+        <script>
+            let song = document.getElementById('song');
+            let songProgress = document.getElementById('song-progress');
+            let start = document.getElementById('start');
+            let playControl = document.getElementById('play-control');
+
+            song.onloadedmetadata = function(){
+                songProgress.max = song.duration;
+                songProgress.value = song.currentTime;
+            }
+
+            function playPause(){
+                if(playControl.classList.contains('bx-pause')){
+                    song.pause();
+                    playControl.classList.remove('bx-pause');
+                    playControl.classList.add('bx-play');
+                }
+                else{
+                    song.play();
+                    playControl.classList.remove('bx-play');
+                    playControl.classList.add('bx-pause');
+                }
+            }
+
+            // slider progess when playing
+            if(song.play()){
+                setInterval(()=>{
+                    songProgress.value = song.currentTime;
+                }, 500);
+            }
+
+            // slider progress when skipped
+            songProgress.onchange = function(){
+                song.play();
+                song.currentTime = songProgress.value;
+                playControl.classList.remove('bx-play');
+                playControl.classList.add('bx-pause');
+            }
+
+            // duration to be updated once song plays
+            if (song.played) {
+                const updateInterval = 500; // Update interval in milliseconds
+                
+                const updateProgress = () => {
+                    songProgress.value = (song.currentTime / song.duration) * 100; // Update progress slider
+                    
+                    // Update current time display
+                    start.textContent = formatTime(song.currentTime);
+                };
+                
+                const formatTime = (time) => {
+                    const minutes = Math.floor(time / 60);
+                    const seconds = Math.floor(time % 60);
+                    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                };
+                
+                // Call updateProgress immediately and then at regular intervals
+                updateProgress();
+                const intervalId = setInterval(updateProgress, updateInterval);
+                
+                // // Clear the interval when the song ends or is paused
+                // song.addEventListener('pause', () => clearInterval(intervalId));
+                // song.addEventListener('ended', () => clearInterval(intervalId));
+
+                // Update song's current time when progress slider is changed
+                songProgress.addEventListener('input', () => {
+                    isChangingProgress = true;
+                    const newPosition = (songProgress.value / 100) * song.duration;
+                    song.currentTime = newPosition;
+                });
+                
+                // Reset the flag when progress slider interaction ends
+                songProgress.addEventListener('change', () => {
+                    isChangingProgress = false;
+                });
+                
+                // Clear the interval when the song ends or is paused
+                song.addEventListener('pause', () => clearInterval(intervalId));
+                song.addEventListener('ended', () => clearInterval(intervalId));
+            }
+
+            
+                
+
+             
+        </script>
+    </body>
+</html>
