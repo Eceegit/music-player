@@ -25,7 +25,7 @@
                        <i class='bx bx-heart'></i>
                     </div>
 
-                    <audio controls id="song">
+                    <audio id="song">
                         <source src="./assets/Nathaniel-Bassey-Ft-Mercy-Chinwo-Tobechukwu-(TrendyBeatz.com).mp3">
                     </audio>
 
@@ -106,9 +106,6 @@
                 updateProgress();
                 const intervalId = setInterval(updateProgress, updateInterval);
                 
-                // // Clear the interval when the song ends or is paused
-                // song.addEventListener('pause', () => clearInterval(intervalId));
-                // song.addEventListener('ended', () => clearInterval(intervalId));
 
                 // Update song's current time when progress slider is changed
                 songProgress.addEventListener('input', () => {
